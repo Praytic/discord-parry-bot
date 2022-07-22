@@ -1,9 +1,6 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - -c
-      - |
-        docker build -t us.gcr.io/${PROJECT_ID}/parry-bot:latest --build-arg token=$$DISCORD_TOKEN .
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/parry-bot:latest', '--build-arg=$$DISCORD_TOKEN', '.']
     secretEnv: ['DISCORD_TOKEN']
 images: ['gcr.io/$PROJECT_ID/parry-bot']
 options:
