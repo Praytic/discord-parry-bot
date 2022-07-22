@@ -18,6 +18,7 @@ FROM scratch
 COPY --from=build /runtime/ /
 COPY --from=build /app/bin/server /app/bin/
 
+ARG DISCORD_TOKEN
 ENV TOKEN $DISCORD_TOKEN
 
 # Start server.
