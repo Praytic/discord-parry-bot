@@ -1,7 +1,7 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
-    args: ['-c', 'echo 1. $_DISCORD_TOKEN && echo 2. $$_DISCORD_TOKEN_2']
+    args: ['-c', 'echo 1. $_DISCORD_TOKEN && echo 2. $_DISCORD_TOKEN_2']
 #    args: ['build', '-t', 'gcr.io/$PROJECT_ID/parry-bot:latest', '--build-arg=_DISCORD_TOKEN', '.']
     secretEnv: ['_DISCORD_TOKEN, _DISCORD_TOKEN_2']
 images: ['gcr.io/$PROJECT_ID/parry-bot']
