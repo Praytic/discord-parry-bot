@@ -1,6 +1,11 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/parry-bot', '.']
+  secretEnv: ['TOKEN', 'PASSWORD']
 images: ['gcr.io/$PROJECT_ID/parry-bot']
 options:
   logging: CLOUD_LOGGING_ONLY
+availableSecrets:
+  secretManager:
+    - versionName: projects/877496460875/secrets/DISCORD_TOKEN/versions/1
+      env: 'TOKEN'
