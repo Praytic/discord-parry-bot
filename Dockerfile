@@ -1,5 +1,7 @@
 FROM dart:stable AS build
 
+ARG DISCORD_TOKEN
+
 # Resolve app dependencies.
 WORKDIR /app
 COPY pubspec.* ./
@@ -12,13 +14,6 @@ RUN dart pub get --offline
 RUN dart pub run build_runner build --delete-conflicting-outputs
 RUN dart compile exe bin/server.dart -o bin/server
 
-# Build minimal serving image from AOT-compiled `/server` and required system
-# libraries and configuration files stored in `/runtime/` from the build stage.
-FROM scratch
-COPY --from=build /runtime/ /
-COPY --from=build /app/bin/server /app/bin/
-
-ARG DISCORD_TOKEN
 ENV TOKEN $DISCORD_TOKEN
 
 # Start server.
