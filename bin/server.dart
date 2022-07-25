@@ -74,7 +74,7 @@ void main() async {
     }
   });
 
-  final server = await HttpServer.bind(InternetAddress.anyIPv6, 80);
+  final server = await HttpServer.bind(InternetAddress.anyIPv4, 80);
   await server.forEach((HttpRequest request) {
     final response = request.response
       ..headers.set('Access-Control-Allow-Origin', '*')
