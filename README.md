@@ -11,7 +11,7 @@ At the end of the day challenge timer should run out if the user who was challen
 a point for that. All users who ever participated in a parry challenge have a stored score. This score can be printed into
 the guild message channel if a user tags the bot:
 - `@parry-bot`
-- "@oliver129 спарировал 100500 раз"
+- "@matew310 спарировал 100500 раз"
 
 ## Build & Deployment
 
