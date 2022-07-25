@@ -1,0 +1,57 @@
+2022-07-24 18:46:12.948358 | FINE | Http | Executing request: [https://discord.com/api/v9/oauth2/applications/@me]; Bucket ID: [https://discord.com/api/v9/oauth2/applications/@me]; Reset at: [null]; Remaining: [10]; Reset after: [null]; Body: [EMPTY]
+2022-07-24 18:46:13.176626 | FINER | Http | Added http header values: HTTP Bucket ID: [null]; Reset at: [null]; Remaining: [10]; Reset after: [null]
+2022-07-24 18:46:13.189748 | FINE | Http | Executing request: [https://discord.com/api/v9/gateway/bot]; Bucket ID: [https://discord.com/api/v9/gateway/bot]; Reset at: [null]; Remaining: [10]; Reset after: [null]; Body: [EMPTY]
+y: , type: null, hook: true, bot_public: true, bot_require_code_grant: false, verify_key: 90750bf92d1b3dfe754de9f34b2acf7c4987d8201fefeffd44848eddbdee407f, owner: {id: 278592046124761088, username: praythicc, avatar: 63ecbadde0accebcd52d599a978ad450, avatar_decoration: null, discriminator: 7981, public_flags: 0, flags: 0}, flags: 0, team: null}]
+2022-07-24 18:46:13.319571 | FINER | Shard Manager | Starting shard with id: 0; url: wss://gateway.discord.gg
+21:57:30.276990
+]; Response: [{url: wss://gateway.discord.gg, shards: 1, session_start_limit: {total: 1000, remaining: 990, reset_after: 11476959, max_concurrency: 1}}]
+2022-07-24 18:46:13.523183 | INFO | Shard Manager | Shard 0 connected to gateway!
+shard [0]: [{cmd: CONNECT_ACK}]
+2022-07-24 18:46:13.532534 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 2, d: {token: OTk5Njk0MjU3MjA2MDgzNjY2.GosWbB.VYtuz2MhOCW7nnNVc83pIZEkGR8TPANnfzGx80, properties: {$os: macos, $browser: nyxx, $device: nyxx}, large_threshold: 50, guild_subscriptions: true, intents: 1536, shard: [0, 1]}}}]
+2022-07-24 18:46:13.726886 | INFO | Shard Manager | Shard 0 ready!
+way payload on shard [0]: [{cmd: DATA, jsonData: {t: READY, s: 1, op: 0, d: {v: 9, user_settings: {}, user: {verified: true, username: parry-bot, mfa_enabled: false, id: 999694257206083666, flags: 0, email: null, discriminator: 5909, bot: true, avatar: null}, shard: [0, 1], session_type: normal, session_id: b30bebd2cacaa4f8b22cc36035e9fd05, resume_gateway_url: wss://gateway.discord.gg/, relationships: [], private_channels: [], presences: [], guilds: [{unavailable: true, id: 350648987059224578}], guild_join_requests: [], geo_ordered_rtc_regions: [santa-clara, us-west, seattle, us-south, us-central], application: {id: 999694257206083666, flags: 262144}, _trace: [["gateway-prd-main-d06l",{"micros":64614,"calls":["discord-sessions-blue-prd-2-32",{"micros":62970,"calls":["start_session",{"micros":46796,"calls":["discord-api-ff4fc7478-7cjzq",{"micros":42510,"calls":["get_user",{"micros":12203},"add_authorized_ip",{"micros":2490},"get_guilds",{"micros":5000},"coros_wait",{"micros":3}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":11310,"calls":[]}]}]}]]}}}]
+2022-07-24 18:46:13.728157 | INFO | Client | Connected and ready! Logged as `parry-bot#5909`
+2022-07-24 18:46:54.921102 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:46:55.024054 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:47:36.176598 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:47:36.267355 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:48:17.421655 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:48:17.520355 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:48:58.672501 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:48:58.770586 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:49:39.924251 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:49:40.017246 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:50:21.178572 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:50:21.282953 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:51:02.424723 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:51:02.518404 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:51:43.676605 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:51:43.806444 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:52:24.924047 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:52:25.031122 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:53:06.178129 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:53:06.303488 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:53:47.425350 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:53:47.530292 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:54:28.678311 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:54:28.810016 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:55:09.926745 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:55:10.042321 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:55:51.176803 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:55:51.278342 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]
+2022-07-24 18:56:22.965807 | FINE | Http | Executing request: [https://discord.com/api/v9/oauth2/applications/@me]; Bucket ID: [https://discord.com/api/v9/oauth2/applications/@me]; Reset at: [null]; Remaining: [10]; Reset after: [null]; Body: [EMPTY]
+2022-07-24 18:56:23.214101 | FINER | Http | Added http header values: HTTP Bucket ID: [null]; Reset at: [null]; Remaining: [10]; Reset after: [null]
+2022-07-24 18:56:23.227550 | FINE | Http | Executing request: [https://discord.com/api/v9/gateway/bot]; Bucket ID: [https://discord.com/api/v9/gateway/bot]; Reset at: [null]; Remaining: [10]; Reset after: [null]; Body: [EMPTY]
+y: , type: null, hook: true, bot_public: true, bot_require_code_grant: false, verify_key: 90750bf92d1b3dfe754de9f34b2acf7c4987d8201fefeffd44848eddbdee407f, owner: {id: 278592046124761088, username: praythicc, avatar: 63ecbadde0accebcd52d599a978ad450, avatar_decoration: null, discriminator: 7981, public_flags: 0, flags: 0}, flags: 0, team: null}]
+2022-07-24 18:56:23.378666 | FINE | main | Bot initialization is complete
+id: 0
+url: wss://gateway.discord.gg
+21:57:30.309341
+]; Response: [{url: wss://gateway.discord.gg, shards: 1, session_start_limit: {total: 1000, remaining: 989, reset_after: 10866947, max_concurrency: 1}}]
+2022-07-24 18:56:23.568261 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: CONNECT_ACK}]
+2022-07-24 18:56:23.577258 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 2, d: {token: OTk5Njk0MjU3MjA2MDgzNjY2.GosWbB.VYtuz2MhOCW7nnNVc83pIZEkGR8TPANnfzGx80, properties: {$os: macos, $browser: nyxx, $device: nyxx}, large_threshold: 50, guild_subscriptions: true, intents: 1536, shard: [0, 1]}}}]
+2022-07-24 18:56:23.899056 | INFO | Shard Manager | Shard 0 ready!
+way payload on shard [0]: [{cmd: DATA, jsonData: {t: READY, s: 1, op: 0, d: {v: 9, user_settings: {}, user: {verified: true, username: parry-bot, mfa_enabled: false, id: 999694257206083666, flags: 0, email: null, discriminator: 5909, bot: true, avatar: null}, shard: [0, 1], session_type: normal, session_id: 492e595b8554b03641b2230cd2a27a04, resume_gateway_url: wss://gateway.discord.gg/, relationships: [], private_channels: [], presences: [], guilds: [{unavailable: true, id: 350648987059224578}], guild_join_requests: [], geo_ordered_rtc_regions: [santa-clara, us-west, seattle, us-south, us-central], application: {id: 999694257206083666, flags: 262144}, _trace: [["gateway-prd-main-hrh1",{"micros":133613,"calls":["discord-sessions-blue-prd-2-116",{"micros":131963,"calls":["start_session",{"micros":80372,"calls":["discord-api-ff4fc7478-phmx5",{"micros":75551,"calls":["get_user",{"micros":22631},"add_authorized_ip",{"micros":4152},"get_guilds",{"micros":3975},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":26372,"calls":[]}]}]}]]}}}]
+2022-07-24 18:56:23.900496 | INFO | Client | Connected and ready! Logged as `parry-bot#5909`
+2022-07-24 18:57:04.936711 | FINEST | Shard Manager | Sending to shard isolate on shard [0]: [{cmd: SEND, data: {op: 1, d: 1}}]
+2022-07-24 18:57:05.029662 | FINEST | Shard Manager | Received gateway payload on shard [0]: [{cmd: DATA, jsonData: {t: null, s: null, op: 11, d: null}}]

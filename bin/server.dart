@@ -13,12 +13,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: prefer_single_quotes
+
 import 'dart:async';
 import 'dart:io';
 
 import 'package:nyxx/nyxx.dart';
+import 'package:logging/logging.dart';
+
+File outputFile = File('application.log');
+Logger logger = Logger('main');
 
 void main() async {
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((LogRecord rec) async {
+    await outputFile.writeAsString(
+        '${rec.time} | ${rec.level} | ${rec.loggerName} | ${rec.message}\n',
+        mode: FileMode.append);
+  });
+
   final duelmap = <Snowflake, List<Snowflake>>{};
   final scores = <Snowflake, int>{};
 
@@ -30,7 +43,8 @@ void main() async {
         CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
     ..registerPlugin(
         IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
-    ..connect();
+    ..connect().whenComplete(
+        () => logger.log(Level.FINE, "Bot initialization is complete"));
 
   // Listen for message events
   bot.eventsWs.onMessageReceived.listen((event) async {
@@ -43,6 +57,8 @@ void main() async {
         final duelists =
             mentions.map((e) => e.id).where((e) => e != author.id).toList();
         duelmap[author.id]?.addAll(duelists);
+        logger.log(Level.FINE,
+            "${author.username} challenged ${mentions.map((e) => e.username).where((e) => e != author.username)}");
       }
     }
   });
@@ -69,6 +85,10 @@ void main() async {
           final score = scores.putIfAbsent(messageAuthor.id, () => 0);
           scores[messageAuthor.id] = score + 1;
           // await message.deleteUserReaction(event.emoji, message);
+          logger.log(
+              Level.FINE,
+              "${messageAuthor.username} parried ${reactionAuthor.username}'s "
+              "challenge");
         }
       }
     }
