@@ -28,7 +28,7 @@ void main() async {
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) async {
     await outputFile.writeAsString(
-        '${rec.time} | ${rec.level} | ${rec.loggerName} | ${rec.message}\n',
+        '[${rec.time}] [${rec.level}] [${rec.loggerName}] ${rec.message}\n',
         mode: FileMode.append);
   });
 
