@@ -1,7 +1,7 @@
-name: hello_world_function
-version: 0.4.0
-description: Dart Functions Framework simple function example.
-repository: https://github.com/GoogleCloudPlatform/functions-framework-dart
+name: discord_parry_bot
+version: 1.0.0
+description: Discord Parry bot for a private guild
+repository: https://github.com/Praytic/discord-parry-bot
 publish_to: none
 
 environment:

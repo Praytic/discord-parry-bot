@@ -8,7 +8,7 @@ COPY . .
 RUN mkdir build
 RUN dart pub get --offline
 RUN dart pub run build_runner build --delete-conflicting-outputs
-RUN dart compile exe bin/server.dart -o build/discord-bot
+RUN dart compile exe lib/server.dart -o build/discord-bot
 
 FROM scratch
 
