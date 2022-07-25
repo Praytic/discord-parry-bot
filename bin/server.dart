@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // Copyright 2021 Google LLC
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the 'License');
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
+// distributed under the License is distributed on an 'AS IS' BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
@@ -18,7 +18,7 @@ import 'dart:io';
 
 import 'package:nyxx/nyxx.dart';
 
-void main() {
+void main() async {
   final duelmap = <Snowflake, List<Snowflake>>{};
   final scores = <Snowflake, int>{};
 
@@ -71,6 +71,37 @@ void main() {
           // await message.deleteUserReaction(event.emoji, message);
         }
       }
+    }
+  });
+
+  final server = await HttpServer.bind(InternetAddress.anyIPv6, 80);
+  await server.forEach((HttpRequest request) {
+    final response = request.response
+      ..headers.set('Access-Control-Allow-Origin', '*')
+      ..headers
+          .set('Access-Control-Allow-Methods', 'POST,GET,DELETE,PUT,OPTIONS');
+    try {
+      switch (request.method) {
+        case 'GET':
+          switch (request.uri.path) {
+            case '/duelmap':
+              response.write('$duelmap');
+              break;
+            case '/scores':
+              response.write('$scores');
+              break;
+            default:
+              throw Exception('URI path [${request.uri.path}] '
+                  'is not supported.');
+          }
+          break;
+        default:
+          throw Exception('HTTP method [${request.method}] is not supported.');
+      }
+    } catch (exception, stackTrace) {
+      response.addError(exception, stackTrace);
+    } finally {
+      response.close();
     }
   });
 }
