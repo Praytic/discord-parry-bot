@@ -20,4 +20,4 @@ COPY --from=builder /runtime/ /
 
 EXPOSE 80
 
-CMD discord-bot
+CMD ["/bin/discord-bot"]
