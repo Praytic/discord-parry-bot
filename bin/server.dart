@@ -25,7 +25,7 @@ File outputFile = File('application.log');
 Logger logger = Logger('main');
 
 void main() async {
-  Logger.root.level = Level.ALL;
+  Logger.root.level = Level.FINE;
   Logger.root.onRecord.listen((LogRecord rec) async {
     await outputFile.writeAsString(
         '[${rec.time}] [${rec.level}] [${rec.loggerName}] ${rec.message}\n',
@@ -44,7 +44,8 @@ void main() async {
     ..registerPlugin(
         IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
     ..connect().whenComplete(
-        () => logger.log(Level.FINE, "Bot initialization is complete"));
+        () => logger.log(Level.INFO, "Bot initialization is complete. "
+            "Discord token: ${hideCreds(token)}"));
 
   // Listen for message events
   bot.eventsWs.onMessageReceived.listen((event) async {
@@ -125,3 +126,6 @@ void main() async {
     }
   });
 }
+
+String? hideCreds(String? creds) => creds?.replaceRange(4, creds.length - 4,
+    '*' * (creds.length - 8));
