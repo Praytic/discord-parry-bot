@@ -20,6 +20,8 @@ import 'dart:io';
 
 import 'package:nyxx/nyxx.dart';
 import 'package:logging/logging.dart';
+import 'package:sembast/sembast.dart';
+import 'package:sembast/sembast_io.dart';
 
 File outputFile = File('application.log');
 Logger logger = Logger('main');
@@ -32,8 +34,10 @@ void main() async {
         mode: FileMode.append);
   });
 
-  final duelmap = <Snowflake, List<Snowflake>>{};
-  final scores = <Snowflake, int>{};
+  final db =
+      await databaseFactoryIo.openDatabase('.dart_tool/sembast/parry-bot.db');
+  final challenges = StoreRef<int, List<Object?>>('challenges');
+  final scores = StoreRef<int, int>('scores');
 
   final token = Platform.environment['TOKEN'];
   final bot = NyxxFactory.createNyxxWebsocket(token!,
@@ -43,9 +47,10 @@ void main() async {
         CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
     ..registerPlugin(
         IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
-    ..connect().whenComplete(
-        () => logger.log(Level.INFO, "Bot initialization is complete. "
-            "Discord token: ${hideCreds(token)}"));
+    ..connect().whenComplete(() => logger.log(
+        Level.INFO,
+        "Bot initialization is complete. "
+        "Discord token: ${hideCreds(token)}"));
 
   // Listen for message events
   bot.eventsWs.onMessageReceived.listen((event) async {
@@ -54,10 +59,9 @@ void main() async {
           event.message.mentions.map((e) async => e.getOrDownload()));
       final author = await event.message.member?.user.getOrDownload();
       if (author != null) {
-        duelmap.putIfAbsent(author.id, () => []);
-        final duelists =
-            mentions.map((e) => e.id).where((e) => e != author.id).toList();
-        duelmap[author.id]?.addAll(duelists);
+        mentions.map((e) => e.id).where((e) => e != author.id).forEach(
+            (e) async =>
+                challenges.record(author.id.id).put(db, [e.id], merge: true));
         logger.log(Level.FINE,
             "${author.username} challenged ${mentions.map((e) => e.username).where((e) => e != author.username)}");
       }
@@ -67,7 +71,7 @@ void main() async {
   bot.eventsWs.onSelfMention.listen((event) async {
     final user = await event.message.member?.user.getOrDownload();
     final username = user?.username;
-    final score = scores[user] ?? 0;
+    final score = await scores.record(user!.id.id).get(db) ?? 0;
     if (username != null) {
       await event.message.channel.sendMessage(MessageBuilder.embed(
           EmbedBuilder()..description = '$username спарировал $score раз'));
@@ -80,17 +84,26 @@ void main() async {
       final reactionAuthor = await event.user.getOrDownload();
       final messageAuthor = message.author;
       if (messageAuthor.id != reactionAuthor.id) {
-        final parried =
-            duelmap[reactionAuthor.id]?.remove(messageAuthor.id) ?? false;
-        if (parried) {
-          final score = scores.putIfAbsent(messageAuthor.id, () => 0);
-          scores[messageAuthor.id] = score + 1;
-          // await message.deleteUserReaction(event.emoji, message);
-          logger.log(
-              Level.FINE,
-              "${messageAuthor.username} parried ${reactionAuthor.username}'s "
-              "challenge");
-        }
+        await db.transaction((txn) async {
+          final parriers =
+              await challenges.record(reactionAuthor.id.id).get(txn);
+          final mutableParriers = parriers?.toList();
+          final parried =
+              mutableParriers?.remove(messageAuthor.id.id) ?? false;
+          if (parried) {
+            await challenges
+                .record(reactionAuthor.id.id)
+                .put(txn, mutableParriers!);
+            final score =
+                await scores.record(messageAuthor.id.id).get(txn) ?? 0;
+            await scores.record(messageAuthor.id.id).put(txn, score + 1);
+            // await message.deleteUserReaction(event.emoji, message);
+            logger.log(
+                Level.FINE,
+                "${messageAuthor.username} parried ${reactionAuthor.username}'s "
+                "challenge");
+          }
+        });
       }
     }
   });
@@ -106,10 +119,10 @@ void main() async {
         case 'GET':
           switch (request.uri.path) {
             case '/duelmap':
-              response.write('$duelmap');
+              response.write('${challenges.find(db)}');
               break;
             case '/scores':
-              response.write('$scores');
+              response.write('${scores.find(db)}');
               break;
             default:
               throw Exception('URI path [${request.uri.path}] '
@@ -127,5 +140,5 @@ void main() async {
   });
 }
 
-String? hideCreds(String? creds) => creds?.replaceRange(4, creds.length - 4,
-    '*' * (creds.length - 8));
+String? hideCreds(String? creds) =>
+    creds?.replaceRange(4, creds.length - 4, '*' * (creds.length - 8));

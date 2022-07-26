@@ -18,6 +18,4 @@ ENV TOKEN $DISCORD_TOKEN
 COPY --from=builder /app/build /bin
 COPY --from=builder /runtime/ /
 
-EXPOSE 80
-
 CMD ["/bin/discord-bot"]
