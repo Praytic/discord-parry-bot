@@ -119,10 +119,12 @@ void main() async {
         case 'GET':
           switch (request.uri.path) {
             case '/duelmap':
-              response.write('${challenges.find(db)}');
+              challenges.find(db)
+                  .then((value) => response.write('${value}'));
               break;
             case '/scores':
-              response.write('${scores.find(db)}');
+              scores.find(db)
+                  .then((value) => response.write('${value}'));
               break;
             default:
               throw Exception('URI path [${request.uri.path}] '
@@ -135,9 +137,11 @@ void main() async {
     } catch (exception, stackTrace) {
       response.addError(exception, stackTrace);
     } finally {
-      response.close();
+      response..flush()..close();
     }
   });
+
+  await db.close();
 }
 
 String? hideCreds(String? creds) =>
