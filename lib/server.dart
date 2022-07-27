@@ -34,8 +34,9 @@ void main() async {
         mode: FileMode.append);
   });
 
-  final db =
-      await databaseFactoryIo.openDatabase('.dart_tool/sembast/parry-bot.db');
+  final db = await databaseFactoryIo
+      .openDatabase('.dart_tool/sembast/parry-bot.db')
+      .whenComplete(() => logger.info("Database connection has been opened."));
   final challenges = StoreRef<int, List<Object?>>('challenges');
   final scores = StoreRef<int, int>('scores');
 
@@ -88,8 +89,7 @@ void main() async {
           final parriers =
               await challenges.record(reactionAuthor.id.id).get(txn);
           final mutableParriers = parriers?.toList();
-          final parried =
-              mutableParriers?.remove(messageAuthor.id.id) ?? false;
+          final parried = mutableParriers?.remove(messageAuthor.id.id) ?? false;
           if (parried) {
             await challenges
                 .record(reactionAuthor.id.id)
@@ -108,7 +108,9 @@ void main() async {
     }
   });
 
-  final server = await HttpServer.bind(InternetAddress.anyIPv4, 80);
+  final server = await HttpServer.bind(InternetAddress.anyIPv4, 80)
+      .whenComplete(() => logger.info("Web server is ready to serve requests "
+          "on port 80."));
   await server.forEach((HttpRequest request) {
     final response = request.response
       ..headers.set('Access-Control-Allow-Origin', '*')
@@ -119,12 +121,10 @@ void main() async {
         case 'GET':
           switch (request.uri.path) {
             case '/duelmap':
-              challenges.find(db)
-                  .then((value) => response.write('${value}'));
+              challenges.find(db).then((value) => response.write('${value}'));
               break;
             case '/scores':
-              scores.find(db)
-                  .then((value) => response.write('${value}'));
+              scores.find(db).then((value) => response.write('${value}'));
               break;
             default:
               throw Exception('URI path [${request.uri.path}] '
@@ -135,13 +135,19 @@ void main() async {
           throw Exception('HTTP method [${request.method}] is not supported.');
       }
     } catch (exception, stackTrace) {
+      logger.log(Level.SEVERE, exception.toString());
       response.addError(exception, stackTrace);
     } finally {
-      response..flush()..close();
+      response
+        ..flush()
+        ..close();
+      logger.log(Level.INFO, "Web server has been unbound.");
     }
   });
 
-  await db.close();
+  await db
+      .close()
+      .whenComplete(() => logger.info("Database connection has been closed."));
 }
 
 String? hideCreds(String? creds) =>
