@@ -36,7 +36,17 @@ class Battlefield {
   bool hasMentionOfChallenge(IMessage message) =>
       message.content.contains('парируй');
 
-  Future<bool> isTryingToParry(IMessage message) async {
+  Future<bool> isTryingToParry(
+      IMessageAuthor parrier, Iterable<IMessage> messages) async {
+    final hasMentionOfParrier = await Stream.fromFutures(messages
+            .map((msg) async => await this.hasMentionOfParrier(parrier, msg)))
+        .any((element) => element);
+    final hasMentionOfChallenge =
+        messages.any((msg) => this.hasMentionOfChallenge(msg));
+    return hasMentionOfParrier && hasMentionOfChallenge;
+  }
+
+  Future<bool> isTryingToParryByReply(IMessage message) async {
     if (!(message.referencedMessage?.exists ?? false)) {
       return false;
     }
@@ -51,23 +61,30 @@ class Battlefield {
       ..where((msg) => msg.author == challenger).sortedBy(
           (msg) => msg.createdAt.difference(challengeMessage.createdAt));
 
-    final hasMentionOfParrier = await Stream.fromFutures(nearestMessages
-            .map((msg) async => await this.hasMentionOfParrier(parrier, msg)))
-        .any((element) => element);
-    final hasMentionOfChallenge =
-        nearestMessages.any((msg) => this.hasMentionOfChallenge(msg));
-    return hasMentionOfChallenge && hasMentionOfParrier;
+    return isTryingToParry(parrier, nearestMessages);
+  }
+
+  Future<bool> isTryingToParrySlowly(IMessage parryMessage) async {
+    final parrier = parryMessage.author;
+
+    final previousMessages = await parryMessage.channel
+        .downloadMessages(limit: 2, before: parryMessage.id)
+        .toList()
+      ..sortedBy((msg) => msg.createdAt.difference(parryMessage.createdAt));
+
+    return isTryingToParry(parrier, previousMessages);
   }
 
   Future<void> handleParry(
-      IMessage parryMessage, IMessageAuthor challenger) async {
+      IMessage parryMessage, [IMessageAuthor? challenger]) async {
     final parrier = parryMessage.author;
+    challenger ??= await _findChallenger(parryMessage);
     final parried = await _parry(parrier, challenger);
     if (parried) {
       _logger.log(
-          Level.FINE,
+          Level.INFO,
           "${parrier.username} parried ${challenger.username}'s "
-          "challenge");
+              "challenge");
     }
   }
 
@@ -99,7 +116,26 @@ class Battlefield {
         .where((e) => e != challenger.username);
 
     _logger.log(
-        Level.FINE, "${challenger.username} challenged ${challengedUsernames}");
+        Level.INFO, "${challenger.username} challenged ${challengedUsernames}");
+  }
+
+  Future<IMessageAuthor> _findChallenger(IMessage parryMessage) async {
+    final parrier = parryMessage.author;
+    final previousMessages = await parryMessage.channel
+        .downloadMessages(before: parryMessage.id)
+        .toList()
+      ..sortedBy((msg) => msg.createdAt.difference(parryMessage.createdAt));
+
+    // Find message where parrier has been challenged
+    final mentionOfParrier = await Stream.fromIterable(previousMessages).asyncMap((msg) async {
+      if (await this.hasMentionOfParrier(parrier, msg)) {
+        return msg;
+      } else {
+        return null;
+      }
+    }).firstWhere((event) => event != null);
+
+    return mentionOfParrier!.author;
   }
 
   Future<Iterable<IUser>> getChallengedUsers(

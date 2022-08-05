@@ -32,9 +32,11 @@ void _setupOperations(INyxxWebsocket bot) {
   bot.eventsWs.onMessageReceived.listen((event) async {
     if (battlefield.hasMentionOfChallenge(event.message)) {
       await battlefield.handleChallenge(event.message);
-    } else if (await battlefield.isTryingToParry(event.message)) {
+    } else if (await battlefield.isTryingToParryByReply(event.message)) {
       await battlefield.handleParry(
           event.message, event.message.referencedMessage!.message!.author);
+    } else if (await battlefield.isTryingToParrySlowly(event.message)) {
+      await battlefield.handleParry(event.message);
     }
   });
 
