@@ -1,5 +1,7 @@
+import 'dart:collection';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:sembast/sembast.dart';
@@ -7,6 +9,8 @@ import 'package:sembast/sembast.dart';
 import 'db.dart';
 
 Logger _logger = Logger('operations');
+PriorityQueue<IMessage> recentMessages =
+    PriorityQueue<IMessage>((a, b) => b.createdAt.compareTo(a.createdAt));
 
 INyxxWebsocket setup() {
   final token = Platform.environment['TOKEN'];
@@ -28,16 +32,37 @@ INyxxWebsocket setup() {
 void _setupOperations(INyxxWebsocket bot) {
   bot.eventsWs.onMessageReceived.listen((event) async {
     if (event.message.content.contains('парируй')) {
-      final mentions = await Future.wait(
-          event.message.mentions.map((e) async => e.getOrDownload()));
-      final author = await event.message.member?.user.getOrDownload();
-      if (author != null) {
-        mentions.map((e) => e.id).where((e) => e != author.id).forEach(
-            (e) async =>
-                challenges.record(author.id.id).put(db, [e.id], merge: true));
-        _logger.log(Level.FINE,
-            "${author.username} challenged ${mentions.map((e) => e.username).where((e) => e != author.username)}");
+      final challenger = await event.message.member?.user.getOrDownload();
+      if (challenger == null) {
+        throw Exception('Challenger is not a member of a channel.');
       }
+
+      late Iterable<IUser> challengedUsers;
+      if (event.message.mentions.isNotEmpty) {
+        // Message has challenged users mentions
+        challengedUsers = await Future.wait(
+            event.message.mentions.map((e) async => e.getOrDownload()));
+      } else {
+        // Message doesn't have challenged users mentions
+        // Will search for message with mention in the nearest messages
+        challengedUsers = await Future.delayed(const Duration(seconds: 5),
+            () => getChallengedUsers(challenger, event.message));
+      }
+
+      // Add challenged users (mentioned by the [challenger]) to the
+      // [challenges] table in the [db]
+      challengedUsers
+          .map((e) => e.id)
+          .where((e) => e != challenger.id)
+          .forEach((e) async => challenges
+          .record(challenger.id.id)
+          .put(db, [e.id], merge: true));
+      final challengedUsernames = challengedUsers
+          .map((e) => e.username)
+          .where((e) => e != challenger.username);
+
+      _logger.log(Level.FINE,
+          "${challenger.username} challenged ${challengedUsernames}");
     }
   });
 
@@ -79,6 +104,24 @@ void _setupOperations(INyxxWebsocket bot) {
       }
     }
   });
+}
+
+Future<Iterable<IUser>> getChallengedUsers(
+    IUser challenger, IMessage challengeMessage) async {
+  // Less than 100 messages posted in this channel by the same user
+  // who started a challenge for parry
+  final nearestMessages = await challengeMessage.channel
+      .downloadMessages(around: challengeMessage.id)
+      .toList()
+    ..where((msg) => msg.author == challenger).sortedBy(
+        (msg) => msg.createdAt.difference(challengeMessage.createdAt));
+  // closest (earlier or later) message to the parry message with mentions
+  final mentionsForParry = nearestMessages
+          .firstWhereOrNull((msg) => msg.mentions.isNotEmpty)
+          ?.mentions
+          .map((e) async => e.getOrDownload()) ??
+      const Iterable.empty();
+  return Future.wait(mentionsForParry);
 }
 
 String? _hideCreds(String? creds) =>

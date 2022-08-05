@@ -15,9 +15,6 @@
 
 // ignore_for_file: prefer_single_quotes
 
-import 'package:logging/logging.dart';
-import 'package:sembast/sembast.dart';
-
 import 'db.dart' as db;
 import 'httpserver.dart' as httpserver;
 import 'bot.dart' as bot;
