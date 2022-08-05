@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -31,43 +30,43 @@ INyxxWebsocket setup() {
 
 void _setupOperations(INyxxWebsocket bot) {
   bot.eventsWs.onMessageReceived.listen((event) async {
-    if (event.message.content.contains('парируй')) {
-      final challenger = await event.message.member?.user.getOrDownload();
-      if (challenger == null) {
-        throw Exception('Challenger is not a member of a channel.');
-      }
-
-      late Iterable<IUser> challengedUsers;
-      if (event.message.mentions.isNotEmpty) {
-        // Message has challenged users mentions
-        challengedUsers = await Future.wait(
-            event.message.mentions.map((e) async => e.getOrDownload()));
-      } else {
-        // Message doesn't have challenged users mentions
-        // Will search for message with mention in the nearest messages
-        challengedUsers = await Future.delayed(const Duration(seconds: 5),
-            () => getChallengedUsers(challenger, event.message));
-      }
-
-      // Add challenged users (mentioned by the [challenger]) to the
-      // [challenges] table in the [db]
-      challengedUsers
-          .map((e) => e.id)
-          .where((e) => e != challenger.id)
-          .forEach((e) async => challenges
-          .record(challenger.id.id)
-          .put(db, [e.id], merge: true));
-      final challengedUsernames = challengedUsers
-          .map((e) => e.username)
-          .where((e) => e != challenger.username);
-
-      _logger.log(Level.FINE,
-          "${challenger.username} challenged ${challengedUsernames}");
+    if (!event.message.content.contains('парируй')) {
+      return;
     }
+
+    final challenger = await event.message.member?.user.getOrDownload();
+    if (challenger == null) {
+      throw Exception('Challenger is not a member of a channel.');
+    }
+
+    late Iterable<IUser> challengedUsers;
+    if (event.message.mentions.isNotEmpty) {
+      // Message has challenged users mentions
+      challengedUsers = await Future.wait(
+          event.message.mentions.map((e) async => e.getOrDownload()));
+    } else {
+      // Message doesn't have challenged users mentions
+      // Will search for message with mention in the nearest messages
+      challengedUsers = await Future.delayed(const Duration(seconds: 5),
+          () => getChallengedUsers(challenger, event.message));
+    }
+
+    // Add challenged users (mentioned by the [challenger]) to the
+    // [challenges] table in the [db]
+    challengedUsers.map((e) => e.id).where((e) => e != challenger.id).forEach(
+        (e) async =>
+            challenges.record(challenger.id.id).put(db, [e.id], merge: true));
+    final challengedUsernames = challengedUsers
+        .map((e) => e.username)
+        .where((e) => e != challenger.username);
+
+    _logger.log(
+        Level.FINE, "${challenger.username} challenged ${challengedUsernames}");
   });
 
   bot.eventsWs.onSelfMention.listen((event) async {
     final user = await event.message.member?.user.getOrDownload();
+
     final username = user?.username;
     final score = await scores.record(user!.id.id).get(db) ?? 0;
     if (username != null) {
@@ -94,7 +93,7 @@ void _setupOperations(INyxxWebsocket bot) {
             final score =
                 await scores.record(messageAuthor.id.id).get(txn) ?? 0;
             await scores.record(messageAuthor.id.id).put(txn, score + 1);
-            // await message.deleteUserReaction(event.emoji, message);
+// await message.deleteUserReaction(event.emoji, message);
             _logger.log(
                 Level.FINE,
                 "${messageAuthor.username} parried ${reactionAuthor.username}'s "
@@ -115,6 +114,7 @@ Future<Iterable<IUser>> getChallengedUsers(
       .toList()
     ..where((msg) => msg.author == challenger).sortedBy(
         (msg) => msg.createdAt.difference(challengeMessage.createdAt));
+
   // closest (earlier or later) message to the parry message with mentions
   final mentionsForParry = nearestMessages
           .firstWhereOrNull((msg) => msg.mentions.isNotEmpty)

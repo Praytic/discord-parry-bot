@@ -22,7 +22,7 @@ $ docker build . -t discord-bot --build-arg DISCORD_TOKEN=<token>
 $ docker run -it -p 8080:80 --name app discord-bot
 ```
 
-...or just locally:
+...or without docker:
 ```shell
 $ dart pub get --offline
 
