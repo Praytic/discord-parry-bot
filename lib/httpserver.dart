@@ -5,7 +5,7 @@ import 'package:sembast/sembast.dart';
 
 import 'db.dart';
 
-Logger _logger = Logger('httpserver');
+Logger _logger = Logger('HTTP Server');
 
 Future<void> setup() async {
   (await HttpServer.bind(InternetAddress.anyIPv4, 80)

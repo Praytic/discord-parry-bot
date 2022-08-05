@@ -2,7 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
-final _logger = Logger('httpserver');
+final _logger = Logger('DB');
 
 final challenges = StoreRef<int, List<Object?>>('challenges');
 final scores = StoreRef<int, int>('scores');
