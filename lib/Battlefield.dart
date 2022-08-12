@@ -7,6 +7,9 @@ import 'db.dart';
 
 class Battlefield {
   Logger _logger = Logger('Battlefield');
+  StoreRef<int, List<Object?>> challenges;
+
+  Battlefield(this.challenges);
 
   Future<bool> _parry(
       SnowflakeEntity parrier, SnowflakeEntity challenger) async {
@@ -34,7 +37,7 @@ class Battlefield {
   }
 
   bool hasMentionOfChallenge(IMessage message) =>
-      message.content.contains('парируй');
+      message.content.toLowerCase().contains('парируй');
 
   Future<bool> isTryingToParry(
       IMessageAuthor parrier, Iterable<IMessage> messages) async {
@@ -68,7 +71,7 @@ class Battlefield {
     final parrier = parryMessage.author;
 
     final previousMessages = await parryMessage.channel
-        .downloadMessages(limit: 2, before: parryMessage.id)
+        .downloadMessages(before: parryMessage.id)
         .toList()
       ..sortedBy((msg) => msg.createdAt.difference(parryMessage.createdAt));
 
@@ -156,4 +159,7 @@ class Battlefield {
         const Iterable.empty();
     return Future.wait(mentionsForParry);
   }
+
+  Future<bool> isUserChallenged(IMessageAuthor potentialParrier) =>
+      challenges.findKey(db).then((parrier) => parrier != null);
 }

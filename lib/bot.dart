@@ -8,7 +8,7 @@ import 'Battlefield.dart';
 import 'db.dart';
 
 Logger _logger = Logger('Bot Operations');
-Battlefield battlefield = Battlefield();
+Battlefield battlefield = Battlefield(challenges);
 
 INyxxWebsocket setup() {
   final token = Platform.environment['TOKEN'];
@@ -19,11 +19,10 @@ INyxxWebsocket setup() {
         CliIntegration()) // Cli integration for nyxx allows stopping application via SIGTERM and SIGKILl
     ..registerPlugin(
         IgnoreExceptions()) // Plugin that handles uncaught exceptions that may occur
-    ..connect().whenComplete(() =>
-        _logger.log(
-            Level.INFO,
-            "Bot initialization is complete. "
-                "Discord token: ${_hideCreds(token)}"));
+    ..connect().whenComplete(() => _logger.log(
+        Level.INFO,
+        "Bot initialization is complete. "
+        "Discord token: ${_hideCreds(token)}"));
   _setupOperations(bot);
   return bot;
 }
@@ -32,11 +31,14 @@ void _setupOperations(INyxxWebsocket bot) {
   bot.eventsWs.onMessageReceived.listen((event) async {
     if (battlefield.hasMentionOfChallenge(event.message)) {
       await battlefield.handleChallenge(event.message);
-    } else if (await battlefield.isTryingToParryByReply(event.message)) {
-      await battlefield.handleParry(
-          event.message, event.message.referencedMessage!.message!.author);
-    } else if (await battlefield.isTryingToParrySlowly(event.message)) {
-      await battlefield.handleParry(event.message);
+    } else if (await battlefield.isUserChallenged(event.message.author)) {
+      if (await battlefield.isTryingToParryByReply(event.message)) {
+        await battlefield.handleParry(
+            event.message, event.message.referencedMessage!.message!.author);
+      }
+      // } else if (await battlefield.isTryingToParrySlowly(event.message)) {
+      //   await battlefield.handleParry(event.message);
+      // }
     }
   });
 
@@ -47,8 +49,7 @@ void _setupOperations(INyxxWebsocket bot) {
     final score = await scores.record(user!.id.id).get(db) ?? 0;
     if (username != null) {
       await event.message.channel.sendMessage(MessageBuilder.embed(
-          EmbedBuilder()
-            ..description = '$username спарировал $score раз'));
+          EmbedBuilder()..description = '$username спарировал $score раз'));
     }
   });
 
