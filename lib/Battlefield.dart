@@ -37,7 +37,8 @@ class Battlefield {
   }
 
   bool hasMentionOfChallenge(IMessage message) =>
-      message.content.toLowerCase().contains('парируй');
+      message.content.toLowerCase().contains('парируй') ||
+          message.content.toLowerCase().contains('Парируй');
 
   Future<bool> isTryingToParry(
       IMessageAuthor parrier, Iterable<IMessage> messages) async {
