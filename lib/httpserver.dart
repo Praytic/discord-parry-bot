@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:logging/logging.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:sembast/sembast.dart';
 
+import 'bot.dart';
 import 'db.dart';
 
 Logger _logger = Logger('HTTP Server');
 
-Future<void> setup() async {
+Future<void> setup(INyxxWebsocket bot) async {
   (await HttpServer.bind(InternetAddress.anyIPv4, 80)
       .whenComplete(() => _logger.info("Web server is ready to serve requests "
           "on port 80.")))
@@ -26,6 +28,9 @@ Future<void> setup() async {
                     .find(db)
                     .then((value) => response.write('${value}'));
                 break;
+              case '/guilds':
+                response.write(getGuilds(bot));
+                break;
               case '/scores':
                 await scores
                     .find(db)
@@ -35,8 +40,16 @@ Future<void> setup() async {
                 response.statusCode = HttpStatus.notFound;
                 break;
               default:
-                throw Exception('URI path [${request.uri.path}] '
-                    'is not supported.');
+                if (request.uri.path.startsWith("/channelHistory")) {
+                  final id = request.uri.path.split("/").last;
+                  response.write(await getChannelHistory(bot, Uri.decodeFull(id)));
+                } else if (request.uri.path.startsWith("/guildChannels")) {
+                  final id = int.parse(request.uri.path.split("/").last);
+                  response.write(getChannels(bot, Snowflake.value(id)));
+                } else {
+                  throw Exception('URI path [${request.uri.path}] '
+                      'is not supported.');
+                }
             }
             break;
           default:

@@ -6,6 +6,7 @@ final _logger = Logger('DB');
 
 final challenges = StoreRef<int, List<Object?>>('challenges');
 final scores = StoreRef<int, int>('scores');
+final messageHistory = StoreRef<String, String>('messagehistory');
 late Database db;
 
 Future<void> setup() async {

@@ -23,6 +23,6 @@ import 'logging.dart' as logging;
 void main() async {
   logging.setup();
   await db.setup();
-  await httpserver.setup();
-  bot.setup();
+  final client = bot.setup();
+  await httpserver.setup(client);
 }
