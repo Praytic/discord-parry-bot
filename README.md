@@ -33,3 +33,10 @@ $ TOKEN=<token> build/discord-bot
 
 ...or you can deploy to GCE (Google Compute Engine). For that you have to setup your own project and use `cloudbuild.yaml`
 for building the docker image from the root Dockerfile.
+
+## Features
+
+- `GET /channelHistory/{channelName}` returns the whole dialog (without emojis and links) from the unique channel in though all connected guilds.
+**IMPORTANT**: In order to retrieve this dialog, first you need to traverse all the messages with `tl;dr` command in the desired channel. After a
+short wait you can call this endpoint and paste the result into [tl;dr openai prompt](https://beta.openai.com/playground/p/default-tldr-summary?model=text-davinci-003)
+and get the result.
